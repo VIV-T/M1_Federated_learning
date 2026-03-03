@@ -1,7 +1,10 @@
 hyperparameters:
   client:
+    _target_: fluke.dcp_client.DPClient
+    clipping: 1.0 # Gradient clipping norm - to limit the influence of any single data point
+    dp_noise_multiplier: 1.2  # Noise multiplier for Gaussian noise - controls the privacy-utility trade-off
     batch_size: 64
-    local_epochs: 5  # nb round per clients
+    local_epochs: 5
     loss: CrossEntropyLoss
     optimizer:
       lr: 0.0001
@@ -11,12 +14,11 @@ hyperparameters:
     scheduler:
       gamma: 1
       step_size: 1
-  model: Adult_LogReg
+  model: Adult_MLP
   net_args:
-    input_dim: 7
+    hidden1: 64
+    hidden2: 32
   server:
     weighted: true
     lr: 1.0
 name: fluke.algorithms.fedavg.FedAVG
-
-

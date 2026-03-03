@@ -6,3 +6,24 @@ python package to install:
 - fluke, using : pip install -e . inside the fluke package folder
 - ucimlrepo
 
+cmd to run for training:
+`fluke federation config/exp-fedavg-logreg-iid.yml config/fedavg-logreg.yml`
+`fluke federation config/exp-fedavg-mlp-iid.yml config/fedavg-mlp.yml`
+`fluke federation config/exp-fedavg-svm-iid.yml config/fedavg-svm.yml`
+
+`fluke federation config/exp-fedavg-mlp-non_iid.yml config/fedavg-mlp.yml`
+`fluke federation config/exp-fedavg-mlp-non_iid.yml config/fedavg-mlp-dcp.yml` (/!\ same log files than the previous one - rename it manually if needed)
+
+
+03/03: Morning
+fluke.dataset.py modification : add of our personal dataset (nutrition), with preprocessing.
+Add of first configuration files to run the first iid training. 
+Note that the division between the train and test dataset is defined into the fluke.data.dataset.py  (80/20)
+
+Privacy:
+- add of the differencial privacy mechanism.
+- new client class: fluke.dcp_client.py
+    => add of noise before the aggregation (locally)
+    2 key parameters:
+        1. clipping: Gradient clipping norm - to limit the influence of any single data point
+        2. dp_noise_multiplier: Noise multiplier for Gaussian noise - controls the privacy-utility trade-off

@@ -22,7 +22,7 @@ exp:
   inmemory: true
 logger:
   name: CsvLog
-  log_dir: runs/health_nutrition_iid
+  log_dir: runs/fedavg-logreg-iid
 protocol:
   eligible_perc: 1.0
   n_clients: 5
