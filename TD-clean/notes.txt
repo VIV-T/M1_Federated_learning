@@ -1,0 +1,72 @@
+1. Install Fluke and the underlying Python environment : 
+    -> create environment
+    -> fluke310/Scripts/activate
+
+2. Run an experiment with MNIST dataset, in an IID FL setting :
+    -> fluke federation config/exp-iid.yaml config/fedavg.yaml
+    Results : /runs/fluke_mnist_iid_30_rounds
+
+3. Use Fluke functionalities to save global metrics, and local metrics by client :
+    -> All the metrics are in each runs folder.
+
+4. Plot the performance of the global FL model, and the clients local models : 
+    -> Performance plots creation are in the 4_plot_performance.ipynb notebook.
+    -> I also perform the comparison of the performance in an non-IID settings that is asked in 5. 
+    Results : /plots/performance_iid.png
+    Results : /plots/performance_non_iid.png
+
+5. Configure and run the scenario in an non-IID FL setting : 
+    -> fluke federation config/exp-non-iid.yaml config/fedavg.yaml
+    Results : /runs/fluke_mnist_non_iid_30_rounds
+
+6. Apply a method that handles clients data heterogeneity (SCAFFOLD), and compare its performance with FedAvg :
+    -> fluke federation config/exp-non-iid.yaml config/scaffold.yaml
+    The performance comparison are done in the plot_performance.ipynb notebook.
+    Results : /plots/comparison_fedavg_scaffold.png
+
+
+7. Deploy a decentralized FL system without any server : 
+    - Followings files are required : 
+        |_ fluke_package/fluke/run.py
+        |_ fluke_package/fluke/algorithms/decentralized.py
+        |_ fluke_package/config/decentralized_fedavg.yaml
+
+    -> fluke decentralized config/exp.yaml config/decentralized_fedavg.yaml
+    Results : /runs/fluke_mnist_non_iid_decentralized
+
+8. Integrate a tabular dataset with different model architectures (M1, M2, M3) :
+    - Followings files are required : 
+        |_ fluke/data/datasets.py
+        |_ fluke/nets.py
+        
+    M1 : Adult_LogReg
+    M2 : Adult_SVM
+    M3 : Adult_MLP
+
+    M1 - LogReg :
+    -> fluke centralized config/exp-adult.yaml config/fedavg-adult.yaml  => runs/adult_LR_centralized
+    -> fluke federation config/exp-adult.yaml config/fedavg-adult.yaml => runs/adult_LR_fedavg
+    -> fluke decentralized config/exp-adult.yaml config/decentralized_fedavg_adult.yaml => runs/adult_LR_decentralized
+
+    M2 - SVM : 
+    -> fluke centralized config/exp-adult.yaml config/fedavg-adult-svm.yaml  => runs/adult_SVM_centralized
+    -> fluke federation config/exp-adult.yaml config/fedavg-adult-svm.yaml => runs/adult_SVM_fedavg
+    -> fluke decentralized config/exp-adult.yaml config/decentralized_fedavg_adult_svm.yaml => runs/adult_SVM_decentralized
+
+
+    M3 - MLP :
+    -> fluke centralized config/exp-adult.yaml config/fedavg-adult-mlp.yaml  => runs/adult_MLP_centralized
+    -> fluke federation config/exp-adult.yaml config/fedavg-adult-mlp.yaml => runs/adult_MLP_fedavg
+    -> fluke decentralized config/exp-adult.yaml config/fedavg-adult-mlp-decentralized.yaml => runs/adult_MLP_decentralized
+
+
+9. Evaluate the performance of the different models in terms of : 
+    - model training time (cost metric)
+    - model accuracy (utility metric)
+
+    Results : 9_plot_performance.ipynb
+
+10. Test different FL hyperparameters.
+    - client eval ratio 100%, 50%, ...
+    - epochs for local training at each client side : 1, 5, 10, ...
+

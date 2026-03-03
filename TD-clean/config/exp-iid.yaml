@@ -1,0 +1,33 @@
+data:
+  client_split: 0.8        # Augmenté : 80% des données du client servent au train local
+  dataset:
+    name: mnist
+    path: ./data
+  distribution:
+    name: iid              # Activé pour une distribution uniforme
+  keep_test: true          # Important pour évaluer chaque client sur son propre test set
+  sampling_perc: 1.0       # Utilise 100% du dataset MNIST
+  server_split: 0.1        # On garde 10% pour le test global du serveur
+  server_test: true        # Active l'évaluation du modèle agrégé
+  uniform_test: true       # En IID, le test set doit aussi être uniforme
+
+eval:
+  eval_every: 1            # Évalue à chaque round pour des courbes fluides
+  locals: true             # CRUCIAL : calcule les métriques pour chaque client
+  post_fit: true           # Évalue après l'entraînement local
+  pre_fit: false           # On peut le mettre à false pour gagner du temps (avant entraînement)
+  server: true             # CRUCIAL : calcule la performance du modèle global
+  task: classification
+
+exp:
+  device: cpu             
+  seed: 42
+
+logger:
+  name: CsvLog             
+  log_dir: runs/fluke_mnist_iid_30_rounds
+
+protocol:
+  eligible_perc: 1.0       
+  n_clients: 10            
+  n_rounds: 30             

@@ -1,0 +1,40 @@
+# Dataset and data splitting options
+data:
+  client_split: 0.2            # Per-client test split ratio
+  dataset:
+    name: mnist                # Dataset name (MNIST here)
+    path: ./data               # Download/storage path
+  distribution:
+    name: dir                  # Non-IID distribution (Dirichlet)
+    beta: 0.02
+  keep_test: true
+  sampling_perc: 1.0
+  server_split: 0.0
+  server_test: true            # Keep a server test set
+  uniform_test: false
+
+# Evaluation options
+eval:
+  eval_every: 1
+  locals: true                 # Server evaluates local models on server test set
+  post_fit: true
+  pre_fit: false
+  server: true                 # Server evaluates global model
+  task: classification
+
+# Global experiment settings
+exp:
+  device: cpu
+  seed: 42
+  inmemory: true
+
+# Logger selection
+logger:
+  name: CsvLog                 # Use CSV logging for all traces
+  log_dir: runs/fluke_mnist_non_iid_local_epoch_10
+
+# FL protocol settings
+protocol:
+  eligible_perc: 1.0           # Fraction of clients sampled each round
+  n_clients: 10
+  n_rounds: 30
