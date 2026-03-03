@@ -1,0 +1,8 @@
+link to our dataset presentation:
+https://archive.ics.uci.edu/dataset/887/national+health+and+nutrition+health+survey+2013-2014+(nhanes)+age+prediction+subset
+
+
+python package to install:
+- fluke, using : pip install -e . inside the fluke package folder
+- ucimlrepo
+
