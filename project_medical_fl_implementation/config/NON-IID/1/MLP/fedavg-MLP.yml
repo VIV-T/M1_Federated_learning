@@ -1,22 +1,24 @@
 hyperparameters:
   client:
-    batch_size: 64
-    local_epochs: 5  # nb round per clients
+    batch_size: 32
+    local_epochs: 15
     loss: CrossEntropyLoss
     optimizer:
-      lr: 0.0001
+      lr: 0.001       
       momentum: 0.9
       weight_decay: 1.0e-05
     persistency: true
     scheduler:
       gamma: 1
       step_size: 1
-  model: Adult_LogReg
+  
+  model: Nutrition_MLP
+  
   net_args:
-    input_dim: 7
+    input_dim: 7     
+
   server:
-    weighted: true
+    weighted: true    
     lr: 1.0
+
 name: fluke.algorithms.fedavg.FedAVG
-
-

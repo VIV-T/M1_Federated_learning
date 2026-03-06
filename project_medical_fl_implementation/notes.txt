@@ -27,3 +27,23 @@ Privacy:
     2 key parameters:
         1. clipping: Gradient clipping norm - to limit the influence of any single data point
         2. dp_noise_multiplier: Noise multiplier for Gaussian noise - controls the privacy-utility trade-off
+
+
+fairness : demograpic bias -> sensitive attribute (gender, age, ethnicity, ...)
+            demograpic group = group with one of the sensitive attribute ( group of male, group of female, young vs old)
+            Will the model behave the same with the different groups ?
+
+            Metrics : 
+            1. SPD ( Statistical Parity Difference) lower it is, better it is 
+                using test set, for the two subset, compute the SPD with the predictions
+
+            2. EOD (Equal Opportunity Difference)
+
+
+
+to do :
+
+->  RUN EXPERIMENT WITH DIFFERENT NOISE PARAMETERS (save models !)
+->  Metrics, for fairness metrics (group 1 = male , group 2 = female , RIAGENDR: 1 represents Male and 2 represents Female)
+->  Vertical FL
+

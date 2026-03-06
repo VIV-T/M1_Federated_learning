@@ -4,6 +4,7 @@ fluke/__init__.py
 fluke/client.py
 fluke/comm.py
 fluke/config.py
+fluke/dcp_client.py
 fluke/evaluation.py
 fluke/get.py
 fluke/nets.py

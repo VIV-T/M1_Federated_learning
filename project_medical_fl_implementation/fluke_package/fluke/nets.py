@@ -64,6 +64,9 @@ __all__ = [
     "Shakespeare_LSTM_E",
     "Shakespeare_LSTM_D",
     "Shakespeare_LSTM",
+    "Nutrition_LogReg",
+    "Nutrition_SVM",
+    "Nutrition_MLP"
 ]
 
 
@@ -1334,3 +1337,41 @@ class MoonCNN(EncoderHeadNet):
 
     def __init__(self, output_size: int = 10):
         super(MoonCNN, self).__init__(MoonCNN_E(), MoonCNN_D(output_size))
+
+
+class Nutrition_LogReg(nn.Module):
+    def __init__(self, input_dim=7):
+        super(Nutrition_LogReg, self).__init__()
+        # On met 2 en sortie pour CrossEntropyLoss (Classe 0 et Classe 1)
+        self.linear = nn.Linear(input_dim, 2) 
+
+    def forward(self, x):
+        # Ne PAS mettre de Sigmoid ici, CrossEntropyLoss l'inclut (via Softmax)
+        return self.linear(x)
+
+
+
+class Nutrition_SVM(nn.Module):
+    def __init__(self, input_dim=7):
+        super(Nutrition_SVM, self).__init__()
+        self.linear = nn.Linear(input_dim, 2)
+
+    def forward(self, x):
+        # On renvoie le score brut (utilisé pour maximiser la marge)
+        return self.linear(x)
+    
+
+
+class Nutrition_MLP(nn.Module):
+    def __init__(self, input_dim=7):
+        super(Nutrition_MLP, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 16),
+            nn.ReLU(),
+            nn.Linear(16, 8),
+            nn.ReLU(),
+            nn.Linear(8, 2)
+        )
+
+    def forward(self, x):
+        return self.network(x)
