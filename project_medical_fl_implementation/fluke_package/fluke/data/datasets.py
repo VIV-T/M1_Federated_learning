@@ -997,6 +997,37 @@ class Datasets:
             2,  # nb of classes (Adult and Senior)
         )
 
+    @classmethod
+    def DIABETES(
+        cls,
+        path: str = "./data",
+        test_size: float = 0.2,
+        seed: int = 42,
+    ) -> DataContainer:
+        # fetch dataset 
+        cdc_diabetes_health_indicators = fetch_ucirepo(id=891) 
+        
+        # data (as pandas dataframes) 
+        X = cdc_diabetes_health_indicators.data.features 
+        y = cdc_diabetes_health_indicators.data.targets 
+        
+        # metadata 
+        #print(cdc_diabetes_health_indicators.metadata) 
+        
+        # variable information 
+        #print(cdc_diabetes_health_indicators.variables) 
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=seed, stratify=y
+        )
+
+        return DataContainer(
+            torch.tensor(X_train.to_numpy(), dtype=torch.float32),
+            torch.tensor(y_train.to_numpy().squeeze(), dtype=torch.long),
+            torch.tensor(X_test.to_numpy(), dtype=torch.float32),
+            torch.tensor(y_test.to_numpy().squeeze(), dtype=torch.long),
+            2,  # nb of classes (diabetes and no diabetes)
+        )
 
 Datasets._DATASET_MAP = {
     "mnist": Datasets.MNIST,
@@ -1013,4 +1044,5 @@ Datasets._DATASET_MAP = {
     "cinic10": Datasets.CINIC10,
     "fcube": Datasets.FCUBE,
     "nutrition": Datasets.NUTRITION,
+    "diabetes": Datasets.DIABETES,
 }

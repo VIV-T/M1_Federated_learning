@@ -173,8 +173,33 @@ def federation(
     except Exception as e:
         raise e
 
-    _run_federation(cfg, resume)
+    # 1. On lance l'entraînement (qui retourne maintenant l'algo)
+    fl_algo = _run_federation(cfg, resume)
 
+    import os
+    import torch
+
+    try:
+        # Construction du chemin de sauvegarde
+        base_log_dir = cfg.logger.log_dir
+        exp_id = getattr(fl_algo, 'id', 'latest_run')
+        save_dir = os.path.join(base_log_dir, str(exp_id))
+        os.makedirs(save_dir, exist_ok=True)
+        
+        save_path = os.path.join(save_dir, "final_model.pth")
+
+        # Accès sécurisé au modèle
+        # On teste si le modèle est dans .server.model ou directement dans .model
+        if hasattr(fl_algo, 'server') and fl_algo.server is not None:
+            model_to_save = fl_algo.server.model
+        else:
+            model_to_save = fl_algo.model
+
+        torch.save(model_to_save.state_dict(), save_path)
+        print(f"\nModel saved to : {save_path}")
+
+    except Exception as e:
+        print(f"\nError saving model: {e}")
 
 @app.command()
 def decentralized(
@@ -285,6 +310,7 @@ def _run_federation(cfg: Configuration, resume: str | None = None) -> None:
     log.add_scalar("run_time_seconds", time.perf_counter() - start_time, 0)
     log.close()
 
+    return fl_algo
 
 def _run_decentralized(cfg: Configuration) -> None:
     import yaml
