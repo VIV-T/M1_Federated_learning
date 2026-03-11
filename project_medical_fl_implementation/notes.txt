@@ -47,3 +47,5 @@ to do :
 ->  Metrics, for fairness metrics (group 1 = male , group 2 = female , RIAGENDR: 1 represents Male and 2 represents Female)
 ->  Vertical FL
 
+
+

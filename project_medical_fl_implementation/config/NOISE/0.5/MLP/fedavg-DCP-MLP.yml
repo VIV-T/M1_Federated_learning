@@ -1,21 +1,27 @@
 hyperparameters:
   client:
-    _target_: fluke.dcp_client.DPClient
-    clipping: 1.0 
-    dp_noise_multiplier: 1.2  
     batch_size: 64
     local_epochs: 5
     loss: CrossEntropyLoss
     optimizer:
-      lr: 0.001              
+      lr: 0.001
       momentum: 0.9
       weight_decay: 1.0e-05
     persistency: true
     scheduler:
       gamma: 1
       step_size: 1
-  model: Nutrition_MLP    
+    dp:
+      l2_norm_clip: 1.0     
+      noise_multiplier: 0.5 
+  
+  model: Diabetes_MLP
+  net_args:
+    input_dim: 21
+
   server:
-    weighted: true
+    weighted: true    
     lr: 1.0
-name: fluke.algorithms.fedavg.FedAVG
+
+
+name: fluke.algorithms.dp_fedavg.DPFedAVG

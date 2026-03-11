@@ -29,5 +29,5 @@ logger:
 
 protocol:
   eligible_perc: 1.0
-  n_clients: 3
+  n_clients: 10
   n_rounds: 25

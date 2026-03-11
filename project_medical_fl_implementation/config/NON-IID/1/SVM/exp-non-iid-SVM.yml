@@ -2,10 +2,10 @@ data:
   client_split: 0.2
   dataset:
     path: ./data
-    name: nutrition  
+    name: diabetes 
   distribution:
-    name: dir
-    beta: 1.0     
+    name: dir  
+    beta: 1.0
   keep_test: true
   sampling_perc: 1.0
   server_test: true
@@ -20,7 +20,7 @@ eval:
   task: classification
 
 exp:
-  device: cpu
+  device: cpu 
   seed: 42
   inmemory: true
 
@@ -30,5 +30,5 @@ logger:
 
 protocol:
   eligible_perc: 1.0
-  n_clients: 3
-  n_rounds: 50
+  n_clients: 10
+  n_rounds: 25

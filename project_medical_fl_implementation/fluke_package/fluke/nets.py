@@ -1375,3 +1375,38 @@ class Nutrition_MLP(nn.Module):
 
     def forward(self, x):
         return self.network(x)
+
+
+# --------------------------- DIABETES ---------------------------
+
+class Diabetes_LR(nn.Module):
+    def __init__(self, input_dim=21):
+        super(Diabetes_LR, self).__init__()
+        self.linear = nn.Linear(input_dim, 2) 
+
+    def forward(self, x):
+        return self.linear(x)
+    
+
+class Diabetes_SVM(nn.Module):
+    def __init__(self, input_dim=21):
+        super(Diabetes_SVM, self).__init__()
+        self.linear = nn.Linear(input_dim, 2)
+
+    def forward(self, x):
+        return self.linear(x)
+
+class Diabetes_MLP(nn.Module):
+    def __init__(self, input_dim=21):
+        super(Diabetes_MLP, self).__init__()
+        self.layers = nn.Sequential(
+            nn.Linear(input_dim, 64),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(64, 32),
+            nn.ReLU(),
+            nn.Linear(32, 2)
+        )
+
+    def forward(self, x):
+        return self.layers(x)
