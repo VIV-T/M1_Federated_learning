@@ -1,0 +1,8 @@
+num_clients: 3
+num_rounds: 20
+batch_size: 128
+lr: 0.001
+embedding_dim: 8
+hidden_dim: 32
+dataset: cdc_diabetes
+log_dir: logs
