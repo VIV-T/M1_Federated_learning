@@ -85,16 +85,19 @@ class VFLStrategy(fl.server.strategy.Strategy):
         # Save best model by F1 score
         if f1 > self.best_f1:
             self.best_f1 = f1
+
+            dp_tag = self.model_dir.name
+
             # Server model
             torch.save(
                 self.server.model.state_dict(),
-                self.model_dir / f"dp_best_server_f1_.pt",
+                self.model_dir / f"dp_best_server_f1_{dp_tag}.pt",
             )
             # Client models
             for i, client in enumerate(self.clients):
                 torch.save(
                     client.local_model.state_dict(),
-                    self.model_dir / f"dp_best_client_{i}_f1.pt",
+                    self.model_dir / f"dp_best_client_{i}_f1_{dp_tag}.pt",
                 )
             print(f"[VFLStrategy] Saved best models (F1={f1:.4f}) to {self.model_dir}")
 

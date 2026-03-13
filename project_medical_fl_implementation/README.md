@@ -190,6 +190,7 @@ Here the differential privacy mechanism can be described as follow:
 To be able to run the trainings, execute:
 - python .\run_experiment_vfl.py
 - python .\run_experiment_vfl_dp.py 
+    - Note that you should modify the config.yml file (vfl_part/config/config.yml) to test different configurations of differential privacy.
 
 
 ## **Results and metrics of this scenario :** ``vlf_part/analysis.ipynb``
