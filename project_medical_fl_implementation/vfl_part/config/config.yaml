@@ -6,9 +6,3 @@ embedding_dim: 8
 hidden_dim: 32
 dataset: cdc_diabetes
 log_dir: logs
-
-differential_privacy:
-  epsilon: 1.0          # Budget de confidentialité
-  delta: 1e-5            # Probabilité de violation de la confidentialité
-  max_grad_norm: 1.0     # Norme maximale pour le clipping des gradients/embeddings
-  noise_multiplier: 0.1  # Multiplicateur de bruit (pour Opacus)

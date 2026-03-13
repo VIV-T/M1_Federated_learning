@@ -41,9 +41,13 @@ fairness : demograpic bias -> sensitive attribute (gender, age, ethnicity, ...)
 
 
 
-to do : check noise ? / metrics analysis + vfl / slides (scénario)
-        |_ less positive data
-        |_ 
+to do :
+
+->  RUN EXPERIMENT WITH DIFFERENT NOISE PARAMETERS (save models !)
+->  Metrics, for fairness metrics (group 1 = male , group 2 = female , RIAGENDR: 1 represents Male and 2 represents Female)
+->  Vertical FL
+
+
 
 
 https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators

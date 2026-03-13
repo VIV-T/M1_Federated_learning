@@ -1,18 +1,11 @@
-import os
-from pathlib import Path
-
-import torch
 import flwr as fl
 
 class VFLStrategy(fl.server.strategy.Strategy):
-    def __init__(self, server, clients, metrics_logger, model_dir="models", **kwargs):
+    def __init__(self, server, clients, metrics_logger, **kwargs):
         super().__init__(**kwargs)
         self.server = server
         self.clients = clients
         self.metrics_logger = metrics_logger
-        self.best_f1 = -float("inf")
-        self.model_dir = Path(model_dir)
-        self.model_dir.mkdir(parents=True, exist_ok=True)
 
     # Méthode obligatoire
     def initialize_parameters(self, client_manager):
@@ -56,7 +49,7 @@ class VFLStrategy(fl.server.strategy.Strategy):
             active_idxs.append(idx)
 
         # calcul loss et gradient côté serveur
-        loss, acc, f1, embedding_grads = self.server.train_step(embeddings, self.clients[0].y)
+        loss, acc, embedding_grads = self.server.train_step(embeddings, self.clients[0].y)
 
         # Log per-client metrics (e.g., grad norm, embedding norm)
         for i, idx in enumerate(active_idxs):
@@ -74,23 +67,7 @@ class VFLStrategy(fl.server.strategy.Strategy):
             params, _, _ = client.fit(client.get_parameters(None), {})
             new_parameters.append(params)
 
-        self.metrics_logger.log(server_round, loss, acc, f1=f1)
-
-        # Save best model by F1 score
-        if f1 > self.best_f1:
-            self.best_f1 = f1
-            # Server model
-            torch.save(
-                self.server.model.state_dict(),
-                self.model_dir / f"best_server_f1.pt",
-            )
-            # Client models
-            for i, client in enumerate(self.clients):
-                torch.save(
-                    client.local_model.state_dict(),
-                    self.model_dir / f"best_client_{i}_f1.pt",
-                )
-            print(f"[VFLStrategy] Saved best models (F1={f1:.4f}) to {self.model_dir}")
+        self.metrics_logger.log(server_round, loss, acc)
 
         # Return something consistent with Flower's expectation: the server's global parameters.
         # This example does not use a global model, so we just return the parameters from the first client.

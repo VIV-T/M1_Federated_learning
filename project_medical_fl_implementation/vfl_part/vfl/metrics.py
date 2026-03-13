@@ -2,7 +2,7 @@ import csv
 import os
 
 class MetricsLogger:
-    def __init__(self, log_path="logs/metrics_global.csv", client_log_path="logs/metrics_clients.csv"):
+    def __init__(self, log_path="logs/metrics.csv", client_log_path="logs/metrics_clients.csv"):
         self.log_path = log_path
         self.client_log_path = client_log_path
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
@@ -19,16 +19,11 @@ class MetricsLogger:
                 writer.writeheader()
             writer.writerow(row)
 
-    def log(self, round, loss, accuracy, f1=None):
+    def log(self, round, loss, accuracy):
         row = {"round": round, "loss": loss, "accuracy": accuracy}
-        if f1 is not None:
-            row["f1"] = f1
         self.history.append(row)
         self._append_to_csv(self.log_path, row)
-        msg = f"[Round {round}] Loss={loss:.4f}, Accuracy={accuracy:.4f}"
-        if f1 is not None:
-            msg += f", F1={f1:.4f}"
-        print(msg)
+        print(f"[Round {round}] Loss={loss:.4f}, Accuracy={accuracy:.4f}")
 
     def log_client(self, round, client_id, **metrics):
         row = {"round": round, "client_id": client_id}
@@ -38,8 +33,6 @@ class MetricsLogger:
 
     def save(self):
         keys = ["round", "loss", "accuracy"]
-        if any("f1" in r for r in self.history):
-            keys.append("f1")
         with open(self.log_path, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=keys)
             writer.writeheader()
