@@ -4,11 +4,25 @@ This study aims to evaluate the performance and robustness of Federated Learning
 
 The objective is to analyze how these models handle the real-world challenges of digital healthcare by subjecting them to three progressive experimental scenarios:
 
+## Requirements
+
+Some python package are required to run the project, here are the cmd to execute to be able to run the entire project:
+
+- 'python -m venv .venv'    to create a virtual environement, ensure that the python version is 3.10
+- 'pip install -e .'        inside the fluke package folder
+- 'pip install ucimlrepo'
+- 'pip install flwr'
+- 'pip install -U "flwr[simulation]"'
+- 'pip install opacus' 
+
+
+
 ## Experimental Scenarios
 
 - 1. IID Baseline (Uniform): Establishing reference performance under ideal and balanced data distribution conditions.
 - 2. Heterogeneity Study ($\beta$): Analyzing model resilience against data fragmentation and imbalance across clients (Non-IID).
 - 3. Differential Privacy (DP-FedAvg): Evaluating the trade-off between protecting patient privacy (via Gaussian noise injection) and diagnostic accuracy.
+- 4. Vertical Federated Learning, with and without Differencial Privacy
 
 By conducting this benchmark, we measure the impact of each configuration on global utility, prediction fairness, and associated communication costs.
 
@@ -122,3 +136,60 @@ We test three values of the `noise_multiplier` ($\sigma$) to measure the trade-o
 
 ## **Results and metrics of this scenario :** ``scenario_3.ipynb``
 
+
+
+
+## Experimental Scenario 4: Vertical Federated Learning (with and without Differencial Privacy)
+
+This scenario introduce the concept of Vertical Federated Learning (VFL). Instead of split our datasets by sampling batch of rows among clients like in Horizontal Federated Learning, the sampling is done now on features. It means that all clients have different features.
+
+
+### Architecture explaination
+- dataset.py : load the dataset into a pandas.Dataframe
+- split.py : Data partioning (features) among clients, formated as pytorch Tensor.
+- models.py : define the local models (clients) and the server one.
+- server.py : server implementation - loss calculation and training based on the embeddings received from the clients.
+- startegy.py : define the strategy used to round coordination between clients and server.
+- metrics.py : metrics update.
+
+<br>
+<br>
+
+Each client train its model locally before sending their embeddings to the server. 
+Then the server aggregates embeddings (concatenation), calculate the loss and update the model. 
+The updates are sent back to the clients.
+
+
+<br>
+<br>
+
+We decide to create 4 clients with the following features:
+- client1: ["HighBP","HighChol", "CholCheck"],
+- client2: ["Stroke","HeartDiseaseorAttack","PhysActivity", "AnyHealthcare", "DiffWalk", "GenHlth", "PhysHlth", "MentHlth"],
+- client3: ["Fruits","Veggies","HvyAlcoholConsump"], 
+- client4: ["Sex","Smoker", "Age", "Education", "Income", "BMI", "NoDocbcCost"]     # sensitive informations
+
+
+<br>
+<br>
+
+Note that this architecture (clients only share the embeddings), allow to keep data privacy and ensure confidentiality.
+To improve the data confidentiality it is possible to add differential privacy.
+Then, to assess the models (with and without DP), it is possible to use fairness metrics like EOD and SDP.
+Note that our results are very bad with Vertical Federated Learning, in particular if we focus on TP, TN, FP, and FN.
+It become worse with Differencial Privacy implementation.
+
+<br>
+<br>
+
+Here the differential privacy mechanism can be described as follow:
+- Clipping of client's embeddings.
+- Add of Gaussian noise to these embeddings before transmission to the server.
+
+### Run instructions
+To be able to run the trainings, execute:
+- python .\run_experiment_vfl.py
+- python .\run_experiment_vfl_dp.py 
+
+
+## **Results and metrics of this scenario :** ``vlf_part/analysis.ipynb``

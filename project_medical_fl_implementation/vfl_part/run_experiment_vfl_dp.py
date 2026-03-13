@@ -5,7 +5,7 @@ import flwr as fl
 from vfl_dp.dataset import load_dataset
 from vfl_dp.split import vertical_split
 from vfl_dp.models import ClientModel, ServerModel
-from vfl_dp.client import VFLClient
+from vfl_dp.client import VFLClient, epsilon, delta, max_grad_norm, noise_multiplier
 from vfl_dp.server import VFLServer
 from vfl_dp.strategy import VFLStrategy
 from vfl_dp.metrics import MetricsLogger
@@ -13,10 +13,23 @@ from vfl_dp.metrics import MetricsLogger
 EMB_DIM = 8
 ROUNDS = 20
 
+
+def _dp_tag() -> str:
+    # Use DP params to build a stable tag for filenames/dirs
+    def fmt(x: float) -> str:
+        return str(x).replace(".", "p")
+
+    return f"dp_eps{fmt(epsilon)}_delta{fmt(delta)}_max{fmt(max_grad_norm)}_noise{fmt(noise_multiplier)}"
+
 def main():
     df = load_dataset()
     data_dict, y = vertical_split(df)
-    metrics_logger = MetricsLogger()
+
+    dp_tag = _dp_tag()
+    metrics_logger = MetricsLogger(
+        log_path=f"logs/metrics_global_{dp_tag}.csv",
+        client_log_path=f"logs/metrics_clients_{dp_tag}.csv",
+    )
 
     # Utiliser tous les clients générés par `vertical_split` (pas besoin de hardcoder le nombre)
     num_clients = len(data_dict)
@@ -33,7 +46,7 @@ def main():
     server = VFLServer(num_clients, EMB_DIM)
 
     # Stratégie personnalisée
-    model_dir = Path(__file__).resolve().parent / "models"
+    model_dir = Path(__file__).resolve().parent / "models" / dp_tag
     strategy = VFLStrategy(
         server=server,
         clients=clients,
