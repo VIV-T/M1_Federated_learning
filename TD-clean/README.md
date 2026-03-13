@@ -6,27 +6,6 @@ We achieve all the tasks step by step, by adding each config file in the order o
 
 ---
 
-## Install Fluke and the underlying Python environment : 
-
-To configure the environment `fluke310` :
-
-1.  **Create environment** : 
-    ```bash
-    python -m venv fluke310
-    ```
-2.  **Activate environment** :
-    * **Windows** : 
-    ```bash
-    fluke310/Scripts/activate
-    ```
-
-    * **Linux/macOS** : 
-    ```bash
-    source fluke310/bin/activate
-    ```
-
----
-
 ## Run experiment with MNIST dataset
 
 * **IID** :
