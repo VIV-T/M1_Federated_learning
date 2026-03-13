@@ -26,9 +26,33 @@ exp:
 
 logger:
   name: CsvLog
-  log_dir: runs/NON-IID/0.5/SVM
+  log_dir: runs/NON-IID/0.5/SVM 
 
 protocol:
   eligible_perc: 1.0
   n_clients: 10
   n_rounds: 25
+
+hyperparameters:
+  client:
+    batch_size: 64 
+    local_epochs: 5 
+    loss: CrossEntropyLoss
+    optimizer:
+      lr: 0.001       
+      momentum: 0.9
+      weight_decay: 1.0e-05
+    persistency: true
+    scheduler:
+      gamma: 1
+      step_size: 1
+  
+  model: Diabetes_SVM 
+  net_args:
+    input_dim: 21
+
+  server:
+    weighted: true    
+    lr: 1.0
+
+name: fluke.algorithms.fedavg.FedAVG

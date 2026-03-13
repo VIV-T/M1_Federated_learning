@@ -1,0 +1,44 @@
+Required packages to run this part: 
+- pip install flwr
+- pip install -U "flwr[simulation]"
+- pip install opacus (already installed with fluke)
+
+
+To run:
+- python .\run_experiment_vfl.py
+- python .\run_experiment_vfl_dp.py 
+
+How Vertical Federated Learning works:
+Instead of split our datasets by sampling batch of rows among clients, the sampling is done now on features. 
+It means that all clients have different features.
+
+Here is the full process:
+- dataset.py : load the dataset into a pandas.Dataframe
+- split.py : Data partioning (features) among clients, formated as pytorch Tensor.
+- models.py : define the local models (clients) and the server one.
+- server.py : server implementation - loss calculation and training based on the embeddings received from the clients.
+- startegy.py : define the strategy used to round coordination between clients and server.
+- metrics.py : metrics update.
+
+Each client train its model locally before sending their embeddings to the server. 
+Then the server aggregates embeddings (concatenation), calculate the loss and update the model. 
+The updates are sent back to the clients.
+
+
+We decide to create 4 clients with the following features:
+- client1: ["HighBP","HighChol", "CholCheck"],
+- client2: ["Stroke","HeartDiseaseorAttack","PhysActivity", "AnyHealthcare", "DiffWalk", "GenHlth", "PhysHlth", "MentHlth"],
+- client3: ["Fruits","Veggies","HvyAlcoholConsump"], 
+- client4: ["Sex","Smoker", "Age", "Education", "Income", "BMI", "NoDocbcCost"]     # sensitive informations
+
+
+Note that this architecture (clients only share the embeddings), allow to keep data privacy and ensure confidentiality.
+To improve the data confidentiality it is possible to add differential privacy.
+Then, to assess the models (with and without DP), it is possible to use fairness metrics like EOD and SDP.
+Note that our results are very bad with Vertical Federated Learning, in particular if we focus on TP, TN, FP, and FN.
+It become worse with Differencial Privacy implementation.
+
+
+Here the differential privacy mechanism can be described as follow:
+- Clipping of client's embeddings.
+- Add of Gaussian noise to these embeddings before transmission to the server.

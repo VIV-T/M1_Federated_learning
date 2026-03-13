@@ -1004,30 +1004,54 @@ class Datasets:
         test_size: float = 0.2,
         seed: int = 42,
     ) -> DataContainer:
-        # fetch dataset 
-        cdc_diabetes_health_indicators = fetch_ucirepo(id=891) 
         
-        # data (as pandas dataframes) 
+        # fetch dataset
+        cdc_diabetes_health_indicators = fetch_ucirepo(id=891) 
         X = cdc_diabetes_health_indicators.data.features 
         y = cdc_diabetes_health_indicators.data.targets 
-        
-        # metadata 
-        #print(cdc_diabetes_health_indicators.metadata) 
-        
-        # variable information 
-        #print(cdc_diabetes_health_indicators.variables) 
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=seed, stratify=y
+        # target variable distribution
+        target_counts = y.value_counts()
+        total = len(y)
+        print("\nDistribution of target (Diabetes_binary) :")
+        for val, count in target_counts.items():
+            percentage = (count / total) * 100
+            label = "Diabetes" if val == 1 else "No Diabetes"
+            print(f"   - {label} ({val}): {count} persons ({percentage:.2f}%)")
+        print("-" * 50)
+
+        # sensible variable
+        sex_col_index = X.columns.get_loc('Sex')
+        print(f"Sensible variable 'Sex' detected at index : {sex_col_index}")
+
+        # split
+        X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+            X.to_numpy(), y.to_numpy().squeeze(), 
+            test_size=test_size, random_state=seed, stratify=y
         )
 
+        # dataset size
+        print("\nSize of the dataset :")
+        print(f"   - Train set : {X_train_raw.shape[0]} samples, {X_train_raw.shape[1]} features")
+        print(f"   - Test set  : {X_test_raw.shape[0]} samples")
+        print("-" * 50)
+        
+        # standardize features
+        mean = X_train_raw.mean(axis=0)
+        std = X_train_raw.std(axis=0)
+        std[std == 0] = 1.0 
+
+        X_train = (X_train_raw - mean) / std
+        X_test = (X_test_raw - mean) / std
+        
         return DataContainer(
-            torch.tensor(X_train.to_numpy(), dtype=torch.float32),
-            torch.tensor(y_train.to_numpy().squeeze(), dtype=torch.long),
-            torch.tensor(X_test.to_numpy(), dtype=torch.float32),
-            torch.tensor(y_test.to_numpy().squeeze(), dtype=torch.long),
-            2,  # nb of classes (diabetes and no diabetes)
+            torch.tensor(X_train, dtype=torch.float32),
+            torch.tensor(y_train, dtype=torch.long),
+            torch.tensor(X_test, dtype=torch.float32),
+            torch.tensor(y_test, dtype=torch.long),
+            2,
         )
+    
 
 Datasets._DATASET_MAP = {
     "mnist": Datasets.MNIST,

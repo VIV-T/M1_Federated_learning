@@ -66,7 +66,11 @@ __all__ = [
     "Shakespeare_LSTM",
     "Nutrition_LogReg",
     "Nutrition_SVM",
-    "Nutrition_MLP"
+    "Nutrition_MLP",
+    "Diabetes_LR",
+    "Diabetes_MLP",
+    "Diabetes_SVM"
+
 ]
 
 

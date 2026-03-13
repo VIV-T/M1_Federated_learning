@@ -2,10 +2,7 @@ import torch
 from torch.nn import CrossEntropyLoss
 from fluke.client import Client
 
-# --------------------------------------------------
-# Client with Differential Privacy (Local DP)
 class DPClient(Client):
-
     def __init__(
         self,
         index,
@@ -19,7 +16,7 @@ class DPClient(Client):
         persistency: bool = True,
         **kwargs,
     ):
-        # Loss set here (simple YAML compatible)
+        # Utilisation de CrossEntropyLoss pour la classification binaire (2 sorties)
         loss_fn = CrossEntropyLoss()
 
         super().__init__(
@@ -34,39 +31,28 @@ class DPClient(Client):
             persistency=persistency,
         )
 
-        # Add DP hyperparameter
         self.hyper_params.update(
             dp_noise_multiplier=dp_noise_multiplier
         )
 
-    # --------------------------------------------------
-    # Addition of Gaussian noise (Local DP)
-    # --------------------------------------------------
     def _add_dp_noise(self):
-
         C = self.hyper_params.clipping
         sigma = self.hyper_params.dp_noise_multiplier
-
-        if C <= 0:
-            raise ValueError(
-                "Clipping must be > 0 to ensure Differential Privacy."
-            )
-
+        
+        # Le bruit doit être proportionnel à la sensibilité (C) et inversement 
+        # proportionnel à la taille du batch pour une analyse DP correcte.
+        # Ici, on l'applique tel quel sur le gradient moyen du batch.
         for p in self.model.parameters():
             if p.grad is not None:
                 noise = torch.normal(
                     mean=0,
-                    std=sigma * C,
+                    std=sigma * C, 
                     size=p.grad.shape,
                     device=p.grad.device,
                 )
                 p.grad.add_(noise)
 
-    # --------------------------------------------------
-    # Override the fit to inject LDP
-    # --------------------------------------------------
     def fit(self, override_local_epochs: int = 0) -> float:
-
         epochs = (
             override_local_epochs
             if override_local_epochs > 0
@@ -82,8 +68,7 @@ class DPClient(Client):
         running_loss = 0.0
 
         for _ in range(epochs):
-            for _, (X, y) in enumerate(self.train_set):
-
+            for X, y in self.train_set:
                 X, y = X.to(self.device), y.to(self.device)
 
                 self.optimizer.zero_grad()
@@ -93,22 +78,17 @@ class DPClient(Client):
 
                 loss.backward()
 
-                # 1. Gradient clipping (already provided by Fluke)
+                # 1. Clipping : On borne l'influence de chaque mise à jour
                 self._clip_grads(self.model)
 
-                # 2. Addition of Gaussian noise (Local DP)
+                # 2. Bruit : On rend les mises à jour confidentielles
                 self._add_dp_noise()
 
-                # 3. Update
+                # 3. Step
                 self.optimizer.step()
-
                 running_loss += loss.item()
 
             self.scheduler.step()
 
-        running_loss /= epochs * len(self.train_set)
-
         self.model.cpu()
-        torch.cuda.empty_cache()
-
-        return running_loss
+        return running_loss / (epochs * len(self.train_set))
