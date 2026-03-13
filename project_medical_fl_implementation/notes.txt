@@ -45,3 +45,5 @@ to do : check noise ? / metrics analysis + vfl / slides (scénario)
         |_ less positive data
         |_ 
 
+
+https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators

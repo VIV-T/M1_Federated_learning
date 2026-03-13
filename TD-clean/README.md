@@ -111,15 +111,26 @@ We implement the tabular dataset **Adult**.
 
 ## Evaluate the performance of the different models
 
-### Plots 
+The graphs and comparative analyses are available in the `9_plot_performance.ipynb` notebook.
 
-The graphs and comparative analyses are available in the `9_plot_performance.ipynb` notebook :
-
-* **Results :**
+## Test different FL hyperparameters
 
 
-TO DO :
-ADD PLOT ON THE README
-RUN LAST EXPERIMENT WITH EPOCHS AND CLIENTS RATIOS
+**Hyperparameters** tested :
+
+- Client ratio : 20, 40, 60, 80, 100
+- Local epochs : 5, 10, 20, 30
+
+**To run :**
+
+Modify `eligible_perc` in the exp-non-iid.yaml to change the client ratio. <br>
+Modify `local_epochs` in the fedavg.yaml to change the local epochs of each client. 
+
+**Results :**
+
+The graphs and comparative analyses are available in the `10_plot_performance.ipynb` notebook.
+
+
+
 
 

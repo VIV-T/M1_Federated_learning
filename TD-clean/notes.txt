@@ -66,7 +66,7 @@
 
     Results : 9_plot_performance.ipynb
 
-10. Test different FL hyperparameters.
+10. Test different FL hyperparameters
     - client eval ratio 100%, 50%, ...
     - epochs for local training at each client side : 1, 5, 10, ...
 
